@@ -1,28 +1,97 @@
-<h3>Book MEWP</h3>
-<form id="bookingForm">
-  <label>Purpose of Booking: <span style="color:red">*</span></label>
-  <input type="text" id="purpose" required><br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEWP Booking Admin Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+    h2 { color: #1565c0; }
+    table { width: 100%; border-collapse: collapse; background-color: white; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    th { background-color: #e3f2fd; }
+    button { margin: 3px; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; }
+    .approve { background-color: #4caf50; color: white; }
+    .reject { background-color: #f44336; color: white; }
+    .delete { background-color: #757575; color: white; }
+    .logout-btn { float: right; background-color: #f44336; color: white; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
 
-  <label>Date of Booking: <span style="color:red">*</span></label>
-  <input type="date" id="date" required><br>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+  <h2>MEWP Booking Admin Dashboard</h2>
+  <p>Approve, reject, or delete bookings below.</p>
 
-  <label>Start Time: <span style="color:red">*</span></label>
-  <input type="time" id="startTime" required><br>
+  <table id="bookingTable">
+    <thead>
+      <tr>
+        <th>Purpose</th>
+        <th>Dates & Time</th>
+        <th>Area</th>
+        <th>Department</th>
+        <th>Responsible</th>
+        <th>Contact</th>
+        <th>Status</th>
+        <th>Remarks</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="bookingBody"></tbody>
+  </table>
 
-  <label>End Time: <span style="color:red">*</span></label>
-  <input type="time" id="endTime" required><br>
+  <script>
+    if (localStorage.getItem("isAdmin") !== "true") {
+      alert("Unauthorized access! Please login first.");
+      window.location.href = "admin-login.html";
+    }
 
-  <label>Area of Booking: <span style="color:red">*</span></label>
-  <input type="text" id="area" required><br>
+    function logout() {
+      localStorage.removeItem("isAdmin");
+      window.location.href = "admin-login.html";
+    }
 
-  <label>Department: <span style="color:red">*</span></label>
-  <input type="text" id="department" required><br>
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const bookingBody = document.getElementById("bookingBody");
 
-  <label>Responsible Person: <span style="color:red">*</span></label>
-  <input type="text" id="responsiblePerson" required><br>
+    function renderBookings() {
+      bookingBody.innerHTML = "";
+      bookings.forEach((booking, index) => {
+        const row = bookingBody.insertRow();
+        row.insertCell(0).innerText = booking.purpose;
+        row.insertCell(1).innerHTML = booking.dates.map(d => `${d.date} (${d.startTime}–${d.endTime})`).join("<br>");
+        row.insertCell(2).innerText = booking.area;
+        row.insertCell(3).innerText = booking.department;
+        row.insertCell(4).innerText = booking.responsiblePerson;
+        row.insertCell(5).innerText = booking.contact;
+        row.insertCell(6).innerText = booking.status || "Pending";
+        row.insertCell(7).innerText = booking.remarks || "";
+        const actionCell = row.insertCell(8);
+        actionCell.innerHTML = `
+          <button class="approve" onclick="updateStatus(${index}, 'Approved')">Approve</button>
+          <button class="reject" onclick="updateStatus(${index}, 'Rejected')">Reject</button>
+          <button class="delete" onclick="deleteBooking(${index})">Delete</button>
+        `;
+      });
+    }
 
-  <label>Contact Number: <span style="color:red">*</span></label>
-  <input type="tel" id="contact" required pattern="[0-9]{10}" title="Enter valid 10-digit number"><br>
+    function updateStatus(index, status) {
+      const remark = prompt("Enter remarks (optional):", "");
+      bookings[index].status = status;
+      bookings[index].remarks = remark || "";
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+      renderBookings();
+    }
 
-  <button type="submit">Submit Booking</button>
-</form>
+    function deleteBooking(index) {
+      if (confirm("Are you sure you want to delete this booking?")) {
+        bookings.splice(index, 1);
+        localStorage.setItem("bookings", JSON.stringify(bookings));
+        renderBookings();
+      }
+    }
+
+    renderBookings();
+  </script>
+</body>
+</html>
