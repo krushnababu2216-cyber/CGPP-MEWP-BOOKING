@@ -1,200 +1,68 @@
-function logoutAdmin() {
-  localStorage.removeItem("isAdminLoggedIn");
-  alert("You have been logged out successfully.");
-  window.location.href = "admin-login.html";
-}
-<script>
-  // ✅ LOGIN CHECK — redirect if admin not logged in
-  if (localStorage.getItem("isAdminLoggedIn") !== "true") {
-    alert("Please log in to access the Admin Dashboard.");
-    window.location.href = "admin-login.html";
-  }
-
-  // Fetch bookings from localStorage (shared data)
-  const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-
-  const tableBody = document.querySelector("#adminTable tbody");
-
-  function renderBookings() {
-    tableBody.innerHTML = "";
-    bookings.forEach((b, i) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${b.purpose}</td>
-        <td>${b.dates || "N/A"}</td>
-        <td>${b.area}</td>
-        <td>${b.department}</td>
-        <td>${b.person}</td>
-        <td>${b.contact}</td>
-        <td class="status-${b.status.toLowerCase()}">${b.status}</td>
-        <td>
-          <button class="approve-btn" onclick="updateStatus(${i}, 'Approved')">Approve</button>
-          <button class="reject-btn" onclick="updateStatus(${i}, 'Rejected')">Reject</button>
-          <button class="delete-btn" onclick="deleteBooking(${i})">Delete</button>
-        </td>
-      `;
-      tableBody.appendChild(tr);
-    });
-  }
-
-  function updateStatus(index, status) {
-    bookings[index].status = status;
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-    renderBookings();
-    alert("Booking " + status + " successfully.");
-  }
-
-  function deleteBooking(index) {
-    if (confirm("Delete this booking?")) {
-      bookings.splice(index, 1);
-      localStorage.setItem("bookings", JSON.stringify(bookings));
-      renderBookings();
-    }
-  }
-
-  function downloadExcel() {
-    let csv = "Purpose,Dates,Area,Department,Person,Contact,Status\n";
-    bookings.forEach(b => {
-      csv += `"${b.purpose}","${b.dates}","${b.area}","${b.department}","${b.person}","${b.contact}","${b.status}"\n`;
-    });
-
-    const blob = new Blob([csv], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "MEWP_Bookings.csv";
-    a.click();
-  }
-
-  renderBookings();
-</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard | Manlifter Booking Portal (MEWP — Mobile Elevated Working Platform)</title>
+  <title>Admin Login — MEWP Booking</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
   <style>
-    body
-    <div style="text-align:right; margin:10px;">
-  <button onclick="logoutAdmin()" style="background-color:#c82333; color:white; border:none; padding:8px 16px; border-radius:5px; cursor:pointer;">
-    🚪 Logout
-  </button>
-</div>
-{
-      font-family: "Segoe UI", Arial, sans-serif;
-      background-color: #f3f6fa;
-      margin: 0;
-      padding: 0;
+    body {
+      background-color: #f8f9fa;
+      font-family: "Segoe UI", sans-serif;
     }
-
-    header {
-      background-color: #003366;
-      color: #fff;
-      text-align: center;
-      padding: 20px 10px;
-      border-bottom: 4px solid #0066cc;
+    .login-container {
+      max-width: 400px;
+      margin: 100px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
     }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.8em;
-    }
-
-    header p {
-      margin-top: 6px;
-      font-size: 0.9em;
-      color: #cce0ff;
-    }
-
-    main {
-      max-width: 1000px;
-      margin: 30px auto;
-      background-color: #fff;
-      padding: 25px 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-
-    h2 {
-      color: #003366;
-      border-bottom: 2px solid #0066cc;
-      padding-bottom: 5px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-      font-size: 0.95em;
-    }
-
-    th {
-      background-color: #0066cc;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    .status-pending {
-      color: #555;
-      font-weight: bold;
-    }
-
-    .status-approved {
-      color: green;
-      font-weight: bold;
-    }
-
-    .status-rejected {
-      color: red;
-      font-weight: bold;
-    }
-
-    button {
+    .btn-primary {
+      background-color: #004aad;
       border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      color: white;
-      font-weight: bold;
     }
-
-    .approve-btn { background-color: #28a745; }
-    .reject-btn { background-color: #dc3545; }
-    .delete-btn { background-color: #6c757d; }
-
-    .approve-btn:hover { background-color: #218838; }
-    .reject-btn:hover { background-color: #c82333; }
-    .delete-btn:hover { background-color: #5a6268; }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      font-size: 0.85em;
-      background-color: #003366;
-      color: white;
-      margin-top: 30px;
+    .btn-primary:hover {
+      background-color: #00327a;
     }
+  </style>
+</head>
+<body>
 
-    .top-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
+  <div class="login-container">
+    <h3 class="text-center mb-4">Admin Login</h3>
+    <form id="loginForm" onsubmit="adminLogin(event)">
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" class="form-control" placeholder="Enter username" required />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="Enter password" required />
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+  </div>
+
+  <script>
+    function adminLogin(event) {
+      event.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // ✅ Change credentials here
+      const adminUser = "admin";
+      const adminPass = "12345";
+
+      if (username === adminUser && password === adminPass) {
+        localStorage.setItem("isAdminLoggedIn", "true");
+        window.location.href = "admin.html";
+      } else {
+        alert("❌ Invalid username or password!");
+      }
     }
+  </script>
 
-    .download-btn {
-      background-color: #0066cc;
-      padding: 8px 16px;
-      border-radius: 6px;
-      color: white;
-      text-decoration: none;
-      font-wei
+</body>
+</html>
