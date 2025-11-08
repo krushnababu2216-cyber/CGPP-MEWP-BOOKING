@@ -3,95 +3,202 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MEWP Booking Admin Dashboard</title>
+  <title>Admin Dashboard - MEWP Booking</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
-    h2 { color: #1565c0; }
-    table { width: 100%; border-collapse: collapse; background-color: white; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-    th { background-color: #e3f2fd; }
-    button { margin: 3px; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; }
-    .approve { background-color: #4caf50; color: white; }
-    .reject { background-color: #f44336; color: white; }
-    .delete { background-color: #757575; color: white; }
-    .logout-btn { float: right; background-color: #f44336; color: white; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0d47a1;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #0d47a1;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #1565c0;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    button {
+      background-color: #0d47a1;
+      color: white;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    button:hover {
+      background-color: #1565c0;
+    }
+    .reject-btn { background-color: #f44336; }
+    .reject-btn:hover { background-color: #c62828; }
+    .delete-btn { background-color: #757575; }
+    .delete-btn:hover { background-color: #424242; }
+    .export-btn {
+      background-color: #43a047;
+      margin-bottom: 10px;
+    }
+    .export-btn:hover {
+      background-color: #2e7d32;
+    }
+    .logout-btn {
+      float: right;
+      background-color: #f44336;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <header>
+    Admin Dashboard - MEWP Booking
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
 
-  <button class="logout-btn" onclick="logout()">Logout</button>
-  <h2>MEWP Booking Admin Dashboard</h2>
-  <p>Approve, reject, or delete bookings below.</p>
-
-  <table id="bookingTable">
-    <thead>
-      <tr>
-        <th>Purpose</th>
-        <th>Dates & Time</th>
-        <th>Area</th>
-        <th>Department</th>
-        <th>Responsible</th>
-        <th>Contact</th>
-        <th>Status</th>
-        <th>Remarks</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="bookingBody"></tbody>
-  </table>
+  <div class="container">
+    <h2>All Booking Requests</h2>
+    <button class="export-btn" onclick="exportExcel()">⬇️ Download Excel</button>
+    <div id="bookingTableContainer"></div>
+  </div>
 
   <script>
-    if (localStorage.getItem("isAdmin") !== "true") {
-      alert("Unauthorized access! Please login first.");
+    // --- ADMIN ACCESS CONTROL ---
+    const adminUser = localStorage.getItem("adminUser");
+    if (!adminUser) {
+      alert("Please login as admin first.");
       window.location.href = "admin-login.html";
     }
 
-    function logout() {
-      localStorage.removeItem("isAdmin");
-      window.location.href = "admin-login.html";
-    }
-
+    // --- BOOKINGS DATA ---
     const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-    const bookingBody = document.getElementById("bookingBody");
 
-    function renderBookings() {
-      bookingBody.innerHTML = "";
-      bookings.forEach((booking, index) => {
-        const row = bookingBody.insertRow();
-        row.insertCell(0).innerText = booking.purpose;
-        row.insertCell(1).innerHTML = booking.dates.map(d => `${d.date} (${d.startTime}–${d.endTime})`).join("<br>");
-        row.insertCell(2).innerText = booking.area;
-        row.insertCell(3).innerText = booking.department;
-        row.insertCell(4).innerText = booking.responsiblePerson;
-        row.insertCell(5).innerText = booking.contact;
-        row.insertCell(6).innerText = booking.status || "Pending";
-        row.insertCell(7).innerText = booking.remarks || "";
-        const actionCell = row.insertCell(8);
-        actionCell.innerHTML = `
-          <button class="approve" onclick="updateStatus(${index}, 'Approved')">Approve</button>
-          <button class="reject" onclick="updateStatus(${index}, 'Rejected')">Reject</button>
-          <button class="delete" onclick="deleteBooking(${index})">Delete</button>
-        `;
+    const tableContainer = document.getElementById("bookingTableContainer");
+
+    function renderTable() {
+      if (!bookings.length) {
+        tableContainer.innerHTML = "<p>No bookings found.</p>";
+        return;
+      }
+
+      let html = `<table><tr>
+        <th>Purpose</th><th>Dates</th><th>Area</th><th>Department</th>
+        <th>Responsible Person</th><th>Contact</th>
+        <th>Status</th><th>Remarks</th><th>Type</th><th>Action</th></tr>`;
+
+      const today = new Date().toISOString().split("T")[0];
+
+      bookings.forEach((b, i) => {
+        const isPast = b.dates.some(d => d.date < today);
+        html += `
+          <tr>
+            <td>${b.purpose}</td>
+            <td>${b.dates.map(d => `${d.date} (${d.startTime}-${d.endTime})`).join("<br>")}</td>
+            <td>${b.area}</td>
+            <td>${b.department}</td>
+            <td>${b.responsiblePerson}</td>
+            <td>${b.contact}</td>
+            <td>${b.status || "Pending"}</td>
+            <td>${b.remarks || ""}</td>
+            <td>${isPast ? "Past" : "Upcoming"}</td>
+            <td>
+              <button onclick="approve(${i})">Approve</button>
+              <button class="reject-btn" onclick="reject(${i})">Reject</button>
+              <button class="delete-btn" onclick="deleteBooking(${i})">Delete</button>
+            </td>
+          </tr>`;
       });
+
+      html += "</table>";
+      tableContainer.innerHTML = html;
     }
 
-    function updateStatus(index, status) {
-      const remark = prompt("Enter remarks (optional):", "");
-      bookings[index].status = status;
-      bookings[index].remarks = remark || "";
-      localStorage.setItem("bookings", JSON.stringify(bookings));
-      renderBookings();
+    renderTable();
+
+    // --- ACTION FUNCTIONS ---
+    function approve(i) {
+      const remarks = prompt("Add approval remarks (optional):") || "";
+      bookings[i].status = "Approved";
+      bookings[i].remarks = remarks;
+      saveBookings();
     }
 
-    function deleteBooking(index) {
+    function reject(i) {
+      const remarks = prompt("Add rejection remarks:") || "";
+      bookings[i].status = "Rejected";
+      bookings[i].remarks = remarks;
+      saveBookings();
+    }
+
+    function deleteBooking(i) {
       if (confirm("Are you sure you want to delete this booking?")) {
-        bookings.splice(index, 1);
-        localStorage.setItem("bookings", JSON.stringify(bookings));
-        renderBookings();
+        bookings.splice(i, 1);
+        saveBookings();
       }
     }
 
-    renderBookings();
+    function saveBookings() {
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+      renderTable();
+    }
+
+    // --- EXCEL EXPORT ---
+    function exportExcel() {
+      if (!bookings.length) return alert("No data to export!");
+      const header = ["Purpose","Dates","Area","Department","Responsible","Contact","Status","Remarks","Type"];
+      const today = new Date().toISOString().split("T")[0];
+      const rows = bookings.map(b => {
+        const isPast = b.dates.some(d => d.date < today);
+        return [
+          b.purpose,
+          b.dates.map(d => `${d.date} (${d.startTime}-${d.endTime})`).join(", "),
+          b.area, b.department, b.responsiblePerson, b.contact,
+          b.status || "Pending", b.remarks || "", isPast ? "Past" : "Upcoming"
+        ];
+      });
+      const csv = [header, ...rows].map(r => r.join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "admin_bookings.csv";
+      a.click();
+    }
+
+    function logout() {
+      localStorage.removeItem("adminUser");
+      window.location.href = "admin-login.html";
+    }
   </script>
 </body>
 </html>
