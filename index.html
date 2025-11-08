@@ -25,7 +25,11 @@
     .remove-btn { background-color: #f44336; margin-top: 10px; }
     .remove-btn:hover { background-color: #c62828; }
     .star { color: red; }
-    #bookingView { display:none; background:white; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin:auto; max-width:800px; }
+    #bookingView { display:none; background:white; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin:auto; max-width:900px; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border:1px solid #ccc; padding:8px; text-align:left; }
+    th { background:#1565c0; color:white; }
+    .export-btn { background:#43a047; margin-bottom:10px; }
   </style>
 </head>
 <body>
@@ -44,13 +48,10 @@
       <div class="date-time-group">
         <label>Date of Booking: <span class="star">*</span></label>
         <input type="date" required class="date">
-
         <label>Start Time: <span class="star">*</span></label>
         <input type="time" required class="startTime">
-
         <label>End Time: <span class="star">*</span></label>
         <input type="time" required class="endTime">
-
         <button type="button" class="remove-btn" onclick="removeDateTime(this)">Remove Date</button>
       </div>
     </div>
@@ -73,7 +74,8 @@
   </form>
 
   <div id="bookingView">
-    <h3>Current Bookings</h3>
+    <h3>All Bookings</h3>
+    <button class="export-btn" onclick="exportExcel()">⬇️ Download Excel</button>
     <div id="bookingList"></div>
   </div>
 
@@ -85,25 +87,30 @@
 
     function renderBookings() {
       bookingList.innerHTML = "";
+      if (!bookings.length) { bookingList.innerHTML = "<p>No bookings found.</p>"; return; }
+
+      let table = `<table><tr>
+        <th>Purpose</th><th>Dates</th><th>Area</th>
+        <th>Department</th><th>Responsible</th><th>Contact</th>
+        <th>Status</th><th>Remarks</th><th>Type</th></tr>`;
+      const today = new Date().toISOString().split("T")[0];
+
       bookings.forEach(b => {
-        const div = document.createElement("div");
-        div.style.border = "1px solid #ccc";
-        div.style.padding = "10px";
-        div.style.borderRadius = "8px";
-        div.style.marginBottom = "10px";
-        div.style.background = "#fff";
-        div.innerHTML = `
-          <b>Purpose:</b> ${b.purpose}<br>
-          <b>Dates:</b> ${b.dates.map(d => `${d.date} (${d.startTime} - ${d.endTime})`).join(", ")}<br>
-          <b>Area:</b> ${b.area}<br>
-          <b>Department:</b> ${b.department}<br>
-          <b>Responsible:</b> ${b.responsiblePerson}<br>
-          <b>Contact:</b> ${b.contact}<br>
-          <b>Status:</b> ${b.status || "Pending"}<br>
-          ${b.remarks ? `<b>Remarks:</b> ${b.remarks}<br>` : ""}
-        `;
-        bookingList.appendChild(div);
+        const isPast = b.dates.some(d => d.date < today);
+        table += `<tr>
+          <td>${b.purpose}</td>
+          <td>${b.dates.map(d => `${d.date} (${d.startTime}-${d.endTime})`).join("<br>")}</td>
+          <td>${b.area}</td>
+          <td>${b.department}</td>
+          <td>${b.responsiblePerson}</td>
+          <td>${b.contact}</td>
+          <td>${b.status || "Pending"}</td>
+          <td>${b.remarks || ""}</td>
+          <td>${isPast ? "Past" : "Upcoming"}</td>
+        </tr>`;
       });
+      table += "</table>";
+      bookingList.innerHTML = table;
     }
 
     function toggleBookings() {
@@ -118,7 +125,6 @@
       const department = document.getElementById("department").value.trim();
       const responsiblePerson = document.getElementById("responsiblePerson").value.trim();
       const contact = document.getElementById("contact").value.trim();
-
       const dateGroups = document.querySelectorAll(".date-time-group");
       const dates = [];
       dateGroups.forEach(g => {
@@ -127,10 +133,9 @@
         const endTime = g.querySelector(".endTime").value;
         if (date && startTime && endTime) dates.push({ date, startTime, endTime });
       });
-
       if (!dates.length) return alert("Please add at least one booking date.");
 
-      const booking = { purpose, dates, area, department, responsiblePerson, contact, status: "Pending" };
+      const booking = { purpose, dates, area, department, responsiblePerson, contact, status:"Pending" };
       bookings.push(booking);
       localStorage.setItem("bookings", JSON.stringify(bookings));
       alert("Booking submitted successfully!");
@@ -154,6 +159,28 @@
 
     function removeDateTime(button) {
       button.closest(".date-time-group").remove();
+    }
+
+    // Excel export
+    function exportExcel() {
+      if (!bookings.length) return alert("No data to export!");
+      const header = ["Purpose","Dates","Area","Department","Responsible","Contact","Status","Remarks","Type"];
+      const today = new Date().toISOString().split("T")[0];
+      const rows = bookings.map(b => {
+        const isPast = b.dates.some(d => d.date < today);
+        return [
+          b.purpose,
+          b.dates.map(d => `${d.date} (${d.startTime}-${d.endTime})`).join(", "),
+          b.area, b.department, b.responsiblePerson, b.contact,
+          b.status || "Pending", b.remarks || "", isPast ? "Past":"Upcoming"
+        ];
+      });
+      const csv = [header, ...rows].map(r => r.join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "mewp_bookings.csv";
+      a.click();
     }
   </script>
 </body>
