@@ -18,6 +18,23 @@
       text-align: center;
       font-size: 1.5rem;
     }
+    .top-buttons {
+      text-align: center;
+      margin: 15px 0;
+    }
+    .top-buttons button {
+      background-color: #1565c0;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 15px;
+    }
+    .top-buttons button:hover {
+      background-color: #0d47a1;
+    }
     form {
       background-color: #fff;
       margin: 30px auto;
@@ -68,13 +85,15 @@
     .star {
       color: red;
     }
-    .export-btn {
-      background-color: #43a047;
-    }
   </style>
 </head>
 <body>
   <header>Welcome to the MEWP Booking System</header>
+
+  <div class="top-buttons">
+    <button onclick="window.location.href='admin-login.html'">🔐 Admin Login</button>
+    <button onclick="toggleBookings()">📋 View Booking Updates</button>
+  </div>
 
   <form id="bookingForm">
     <label>Purpose of Booking: <span class="star">*</span></label>
@@ -112,7 +131,7 @@
     <button type="submit">Submit Booking</button>
   </form>
 
-  <div style="max-width: 800px; margin: auto;">
+  <div style="max-width: 800px; margin: auto; display:none;" id="bookingView">
     <h3>Current Bookings</h3>
     <div id="bookingList"></div>
   </div>
@@ -120,6 +139,7 @@
   <script>
     const form = document.getElementById("bookingForm");
     const bookingList = document.getElementById("bookingList");
+    const bookingView = document.getElementById("bookingView");
 
     const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
 
@@ -140,12 +160,17 @@
           <b>Responsible:</b> ${b.responsiblePerson}<br>
           <b>Contact:</b> ${b.contact}<br>
           <b>Status:</b> ${b.status || "Pending"}<br>
+          ${b.remarks ? `<b>Remarks:</b> ${b.remarks}<br>` : ""}
         `;
         bookingList.appendChild(div);
       });
     }
 
     renderBookings();
+
+    function toggleBookings() {
+      bookingView.style.display = bookingView.style.display === "none" ? "block" : "none";
+    }
 
     form.addEventListener("submit", function(e) {
       e.preventDefault();
@@ -186,17 +211,6 @@
       localStorage.setItem("bookings", JSON.stringify(bookings));
       alert("Booking submitted successfully!");
       form.reset();
-      document.getElementById("dateTimeContainer").innerHTML = `
-        <div class="date-time-group">
-          <label>Date of Booking: <span class="star">*</span></label>
-          <input type="date" required class="date">
-          <label>Start Time: <span class="star">*</span></label>
-          <input type="time" required class="startTime">
-          <label>End Time: <span class="star">*</span></label>
-          <input type="time" required class="endTime">
-          <button type="button" class="remove-btn" onclick="removeDateTime(this)">Remove Date</button>
-        </div>
-      `;
       renderBookings();
     });
 
