@@ -1,87 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard - MEWP Booking</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-    h2 { color: #1e88e5; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
-    th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-    th { background-color: #e3f2fd; }
-    button { padding: 6px 12px; margin: 2px; border: none; border-radius: 4px; cursor: pointer; }
-    button.approve { background-color: #4caf50; color: white; }
-    button.reject { background-color: #f44336; color: white; }
-    button.delete { background-color: #757575; color: white; }
-  </style>
-</head>
-<body>
-  <h2>MEWP Booking Admin Dashboard</h2>
-  <p>This page allows the admin to approve, reject, or delete bookings.</p>
+<h3>Book MEWP</h3>
+<form id="bookingForm">
+  <label>Purpose of Booking: <span style="color:red">*</span></label>
+  <input type="text" id="purpose" required><br>
 
-  <table id="bookingTable">
-    <thead>
-      <tr>
-        <th>Purpose</th>
-        <th>Date(s)</th>
-        <th>Duration</th>
-        <th>Area</th>
-        <th>Department</th>
-        <th>Responsible Person</th>
-        <th>Contact</th>
-        <th>Status</th>
-        <th>Remarks</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <label>Date of Booking: <span style="color:red">*</span></label>
+  <input type="date" id="date" required><br>
 
-  <script>
-    // Load all saved bookings from localStorage
-    const table = document.querySelector("#bookingTable tbody");
-    const bookings = JSON.parse(localStorage.getItem("mewpBookings")) || [];
+  <label>Start Time: <span style="color:red">*</span></label>
+  <input type="time" id="startTime" required><br>
 
-    function renderBookings() {
-      table.innerHTML = "";
-      bookings.forEach((b, i) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${b.purpose}</td>
-          <td>${b.date}</td>
-          <td>${b.duration}</td>
-          <td>${b.area}</td>
-          <td>${b.department}</td>
-          <td>${b.responsible}</td>
-          <td>${b.contact}</td>
-          <td>${b.status || "Pending"}</td>
-          <td>${b.remarks || ""}</td>
-          <td>
-            <button class="approve" onclick="updateStatus(${i}, 'Approved')">Approve</button>
-            <button class="reject" onclick="updateStatus(${i}, 'Rejected')">Reject</button>
-            <button class="delete" onclick="deleteBooking(${i})">Delete</button>
-          </td>`;
-        table.appendChild(row);
-      });
-    }
+  <label>End Time: <span style="color:red">*</span></label>
+  <input type="time" id="endTime" required><br>
 
-    function updateStatus(index, status) {
-      const remarks = prompt("Enter remarks (optional):");
-      bookings[index].status = status;
-      bookings[index].remarks = remarks || "";
-      localStorage.setItem("mewpBookings", JSON.stringify(bookings));
-      renderBookings();
-    }
+  <label>Area of Booking: <span style="color:red">*</span></label>
+  <input type="text" id="area" required><br>
 
-    function deleteBooking(index) {
-      if (confirm("Are you sure you want to delete this booking?")) {
-        bookings.splice(index, 1);
-        localStorage.setItem("mewpBookings", JSON.stringify(bookings));
-        renderBookings();
-      }
-    }
+  <label>Department: <span style="color:red">*</span></label>
+  <input type="text" id="department" required><br>
 
-    renderBookings();
-  </script>
-</body>
-</html>
+  <label>Responsible Person: <span style="color:red">*</span></label>
+  <input type="text" id="responsiblePerson" required><br>
+
+  <label>Contact Number: <span style="color:red">*</span></label>
+  <input type="tel" id="contact" required pattern="[0-9]{10}" title="Enter valid 10-digit number"><br>
+
+  <button type="submit">Submit Booking</button>
+</form>
