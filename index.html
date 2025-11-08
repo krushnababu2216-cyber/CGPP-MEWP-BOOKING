@@ -23,11 +23,14 @@
     <label>Purpose of Booking:</label>
     <textarea id="purpose" required></textarea>
 
-    <label>Date(s) of Booking (comma separated if multiple):</label>
-    <input type="text" id="dates" placeholder="e.g. 09/11/2025, 10/11/2025" required>
+    <label>Date of Booking:</label>
+    <input type="date" id="date" required>
 
-    <label>Duration (e.g. 8 AM - 5 PM):</label>
-    <input type="text" id="duration" required>
+    <label>Start Time:</label>
+    <input type="time" id="startTime" required>
+
+    <label>End Time:</label>
+    <input type="time" id="endTime" required>
 
     <label>Area of Booking:</label>
     <input type="text" id="area" required>
@@ -56,10 +59,10 @@
 
     function displayBookings() {
       list.innerHTML = '';
-      bookings.forEach((b, i) => {
+      bookings.forEach((b) => {
         const div = document.createElement('div');
         div.className = 'booking-item';
-        div.innerHTML = `<b>${b.dates}</b> - ${b.duration} <br>
+        div.innerHTML = `<b>${b.date}</b> (${b.startTime} - ${b.endTime})<br>
                          <b>Purpose:</b> ${b.purpose}<br>
                          <b>Area:</b> ${b.area}<br>
                          <b>Dept:</b> ${b.department}<br>
@@ -70,20 +73,35 @@
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+
       const booking = {
         purpose: purpose.value,
-        dates: dates.value,
-        duration: duration.value,
+        date: date.value,
+        startTime: startTime.value,
+        endTime: endTime.value,
         area: area.value,
         department: department.value,
         person: person.value,
         contact: contact.value
       };
+
+      // Prevent overlapping bookings
+      const overlap = bookings.some(b => 
+        b.date === booking.date &&
+        ((booking.startTime >= b.startTime && booking.startTime < b.endTime) ||
+         (booking.endTime > b.startTime && booking.endTime <= b.endTime))
+      );
+
+      if (overlap) {
+        alert('⚠️ This time slot is already booked. Please choose another time.');
+        return;
+      }
+
       bookings.push(booking);
       localStorage.setItem('bookings', JSON.stringify(bookings));
       displayBookings();
       form.reset();
-      alert('Booking submitted successfully!');
+      alert('✅ Booking submitted successfully!');
     });
 
     displayBookings();
