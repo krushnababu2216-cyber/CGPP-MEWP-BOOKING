@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - MEWP Booking</title>
+  <style>
+    body {
+      background-color: #f0f4f8;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      width: 350px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #0d47a1;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #0d47a1;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
+    button:hover {
+      background-color: #1565c0;
+    }
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      color: #1565c0;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Admin Login</h2>
+    <input type="text" id="adminId" placeholder="Enter Admin ID" required>
+    <input type="password" id="adminPass" placeholder="Enter Password" required>
+    <button onclick="login()">Login</button>
+    <a href="index.html">⬅ Back to Booking Page</a>
+  </div>
+
+  <script>
+    function login() {
+      const id = document.getElementById("adminId").value.trim();
+      const pass = document.getElementById("adminPass").value.trim();
+
+      // Admin credentials
+      const ADMIN_ID = "admin@mewp";
+      const ADMIN_PASS = "mewp123";
+
+      if (id === ADMIN_ID && pass === ADMIN_PASS) {
+        localStorage.setItem("adminUser", id);
+        window.location.href = "admin.html";
+      } else {
+        alert("Invalid ID or password!");
+      }
+    }
+  </script>
+</body>
+</html>
