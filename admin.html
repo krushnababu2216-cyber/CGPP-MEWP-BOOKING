@@ -1,3 +1,8 @@
+function logoutAdmin() {
+  localStorage.removeItem("isAdminLoggedIn");
+  alert("You have been logged out successfully.");
+  window.location.href = "admin-login.html";
+}
 <script>
   // ✅ LOGIN CHECK — redirect if admin not logged in
   if (localStorage.getItem("isAdminLoggedIn") !== "true") {
