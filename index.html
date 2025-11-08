@@ -5,86 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MEWP Booking System</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f7fa;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #0d47a1;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 1.5rem;
-    }
-    .top-buttons {
-      text-align: center;
-      margin: 15px 0;
-    }
+    body { font-family: Arial, sans-serif; background-color: #f5f7fa; margin: 0; padding: 0; }
+    header { background-color: #0d47a1; color: white; padding: 15px; text-align: center; font-size: 1.5rem; }
+    .top-buttons { text-align: center; margin: 15px 0; }
     .top-buttons button {
-      background-color: #1565c0;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin: 5px;
-      font-size: 15px;
+      background-color: #1565c0; color: white; border: none;
+      padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px; font-size: 15px;
     }
-    .top-buttons button:hover {
-      background-color: #0d47a1;
-    }
+    .top-buttons button:hover { background-color: #0d47a1; }
     form {
-      background-color: #fff;
-      margin: 30px auto;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 600px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      background-color: #fff; margin: 30px auto; padding: 20px; border-radius: 12px;
+      max-width: 600px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 6px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .date-time-group {
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-      margin-top: 10px;
-    }
-    button {
-      background-color: #0d47a1;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 15px;
-    }
-    button:hover {
-      background-color: #1565c0;
-    }
-    .remove-btn {
-      background-color: #f44336;
-      margin-top: 10px;
-    }
-    .remove-btn:hover {
-      background-color: #c62828;
-    }
-    .star {
-      color: red;
-    }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 6px; border: 1px solid #ccc; border-radius: 5px; }
+    .date-time-group { border: 1px solid #ccc; padding: 10px; border-radius: 8px; background-color: #f9f9f9; margin-top: 10px; }
+    button { background-color: #0d47a1; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 15px; }
+    button:hover { background-color: #1565c0; }
+    .remove-btn { background-color: #f44336; margin-top: 10px; }
+    .remove-btn:hover { background-color: #c62828; }
+    .star { color: red; }
+    #bookingView { display:none; background:white; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin:auto; max-width:800px; }
   </style>
 </head>
 <body>
@@ -131,7 +72,7 @@
     <button type="submit">Submit Booking</button>
   </form>
 
-  <div style="max-width: 800px; margin: auto; display:none;" id="bookingView">
+  <div id="bookingView">
     <h3>Current Bookings</h3>
     <div id="bookingList"></div>
   </div>
@@ -140,12 +81,11 @@
     const form = document.getElementById("bookingForm");
     const bookingList = document.getElementById("bookingList");
     const bookingView = document.getElementById("bookingView");
-
     const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
 
     function renderBookings() {
       bookingList.innerHTML = "";
-      bookings.forEach((b, i) => {
+      bookings.forEach(b => {
         const div = document.createElement("div");
         div.style.border = "1px solid #ccc";
         div.style.padding = "10px";
@@ -166,15 +106,13 @@
       });
     }
 
-    renderBookings();
-
     function toggleBookings() {
       bookingView.style.display = bookingView.style.display === "none" ? "block" : "none";
+      renderBookings();
     }
 
     form.addEventListener("submit", function(e) {
       e.preventDefault();
-
       const purpose = document.getElementById("purpose").value.trim();
       const area = document.getElementById("area").value.trim();
       const department = document.getElementById("department").value.trim();
@@ -187,31 +125,16 @@
         const date = g.querySelector(".date").value;
         const startTime = g.querySelector(".startTime").value;
         const endTime = g.querySelector(".endTime").value;
-        if (date && startTime && endTime) {
-          dates.push({ date, startTime, endTime });
-        }
+        if (date && startTime && endTime) dates.push({ date, startTime, endTime });
       });
 
-      if (!dates.length) {
-        alert("Please add at least one booking date with start & end time.");
-        return;
-      }
+      if (!dates.length) return alert("Please add at least one booking date.");
 
-      const booking = {
-        purpose,
-        dates,
-        area,
-        department,
-        responsiblePerson,
-        contact,
-        status: "Pending"
-      };
-
+      const booking = { purpose, dates, area, department, responsiblePerson, contact, status: "Pending" };
       bookings.push(booking);
       localStorage.setItem("bookings", JSON.stringify(bookings));
       alert("Booking submitted successfully!");
       form.reset();
-      renderBookings();
     });
 
     function addDateTime() {
@@ -230,8 +153,7 @@
     }
 
     function removeDateTime(button) {
-      const group = button.closest(".date-time-group");
-      group.remove();
+      button.closest(".date-time-group").remove();
     }
   </script>
 </body>
