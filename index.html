@@ -198,18 +198,79 @@
     © 2025 CGPP | MEWP Booking System
   </footer>
 
-  <script>
-    function addDateTime() {
-      const container = document.getElementById('dateTimeContainer');
-      const div = document.createElement('div');
-      div.className = 'date-time-row';
-      div.innerHTML = `
-        <input type="date" required />
-        <input type="time" required />
-        <input type="time" required />
+<script>
+  // Function to load bookings from localStorage
+  function loadBookings() {
+    return JSON.parse(localStorage.getItem("bookings")) || [];
+  }
+
+  // Function to save bookings to localStorage
+  function saveBookings(bookings) {
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+  }
+
+  // Function to render the booking summary table
+  function renderBookings() {
+    const bookings = loadBookings();
+    const table = document.getElementById("bookingTableBody");
+    if (!table) return;
+    table.innerHTML = "";
+    bookings.forEach((b, i) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${b.purpose}</td>
+        <td>${b.dates}</td>
+        <td>${b.area}</td>
+        <td>${b.department}</td>
+        <td>${b.person}</td>
+        <td>${b.contact}</td>
+        <td>${b.status}</td>
       `;
-      container.appendChild(div);
+      table.appendChild(tr);
+    });
+  }
+
+  // Function for submitting a booking
+  document.getElementById("bookingForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const purpose = document.getElementById("purpose").value.trim();
+    const dates = document.getElementById("dates").value.trim();
+    const area = document.getElementById("area").value.trim();
+    const department = document.getElementById("department").value.trim();
+    const person = document.getElementById("person").value.trim();
+    const contact = document.getElementById("contact").value.trim();
+
+    if (!purpose || !dates || !area || !department || !person || !contact) {
+      alert("⚠️ Please fill all required fields before submitting.");
+      return;
     }
-  </script>
+
+    const bookings = loadBookings();
+    bookings.push({
+      purpose,
+      dates,
+      area,
+      department,
+      person,
+      contact,
+      status: "Pending"
+    });
+    saveBookings(bookings);
+
+    // Show success message
+    alert("✅ Booking submitted successfully!");
+
+    // Reset the form
+    document.getElementById("bookingForm").reset();
+
+    // Re-render the table
+    renderBookings();
+  });
+
+  // Load existing bookings on page load
+  renderBookings();
+</script>
+
 </body>
 </html>
