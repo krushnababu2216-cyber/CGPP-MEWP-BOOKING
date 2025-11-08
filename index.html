@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MEWP Booking System</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
-    h1 { text-align: center; color: #333; }
-    form { background: white; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    label { display: block; margin-top: 15px; font-weight: bold; }
-    input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
-    button { margin-top: 20px; background: #0070f3; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #0059c1; }
-    .bookings { margin-top: 40px; max-width: 700px; margin-left: auto; margin-right: auto; }
-    .booking-item { background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f6f6f6; }
+    h1 { text-align: center; color: #003366; }
+    form { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: 20px auto; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 10px 15px; background: #003366; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #0055aa; }
+    #bookings { max-width: 600px; margin: 30px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .booking-item { border-bottom: 1px solid #ddd; padding: 8px 0; }
   </style>
 </head>
 <body>
@@ -23,88 +23,70 @@
     <label>Purpose of Booking:</label>
     <textarea id="purpose" required></textarea>
 
-    <label>Date of Booking:</label>
-    <input type="date" id="date" required>
+    <label>Date(s) of Booking:</label>
+    <input type="date" id="bookingDate" multiple required />
 
     <label>Start Time:</label>
-    <input type="time" id="startTime" required>
+    <input type="time" id="startTime" required />
 
     <label>End Time:</label>
-    <input type="time" id="endTime" required>
+    <input type="time" id="endTime" required />
 
     <label>Area of Booking:</label>
-    <input type="text" id="area" required>
+    <textarea id="area" required></textarea>
 
     <label>Department:</label>
-    <input type="text" id="department" required>
+    <input type="text" id="department" required />
 
     <label>Responsible Person:</label>
-    <input type="text" id="person" required>
+    <input type="text" id="person" required />
 
     <label>Contact Number:</label>
-    <input type="text" id="contact" required>
+    <input type="text" id="contact" required />
 
     <button type="submit">Submit Booking</button>
   </form>
 
-  <div class="bookings">
-    <h2>Current Bookings</h2>
+  <div id="bookings">
+    <h3>Current Bookings</h3>
     <div id="bookingList"></div>
   </div>
 
   <script>
     const form = document.getElementById('bookingForm');
-    const list = document.getElementById('bookingList');
-    const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    const bookingList = document.getElementById('bookingList');
+    const savedBookings = JSON.parse(localStorage.getItem('mewpBookings')) || [];
 
-    function displayBookings() {
-      list.innerHTML = '';
-      bookings.forEach((b) => {
+    function renderBookings() {
+      bookingList.innerHTML = '';
+      savedBookings.forEach((b) => {
         const div = document.createElement('div');
         div.className = 'booking-item';
-        div.innerHTML = `<b>${b.date}</b> (${b.startTime} - ${b.endTime})<br>
-                         <b>Purpose:</b> ${b.purpose}<br>
-                         <b>Area:</b> ${b.area}<br>
-                         <b>Dept:</b> ${b.department}<br>
-                         <b>Person:</b> ${b.person} (${b.contact})`;
-        list.appendChild(div);
+        div.innerHTML = `<b>${b.date}</b> | ${b.start} - ${b.end} | ${b.person} (${b.dept})<br>${b.purpose}`;
+        bookingList.appendChild(div);
       });
     }
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-
       const booking = {
-        purpose: purpose.value,
-        date: date.value,
-        startTime: startTime.value,
-        endTime: endTime.value,
-        area: area.value,
-        department: department.value,
-        person: person.value,
-        contact: contact.value
+        purpose: document.getElementById('purpose').value,
+        date: document.getElementById('bookingDate').value,
+        start: document.getElementById('startTime').value,
+        end: document.getElementById('endTime').value,
+        area: document.getElementById('area').value,
+        dept: document.getElementById('department').value,
+        person: document.getElementById('person').value,
+        contact: document.getElementById('contact').value
       };
-
-      // Prevent overlapping bookings
-      const overlap = bookings.some(b => 
-        b.date === booking.date &&
-        ((booking.startTime >= b.startTime && booking.startTime < b.endTime) ||
-         (booking.endTime > b.startTime && booking.endTime <= b.endTime))
-      );
-
-      if (overlap) {
-        alert('⚠️ This time slot is already booked. Please choose another time.');
-        return;
-      }
-
-      bookings.push(booking);
-      localStorage.setItem('bookings', JSON.stringify(bookings));
-      displayBookings();
+      savedBookings.push(booking);
+      localStorage.setItem('mewpBookings', JSON.stringify(savedBookings));
+      alert('Booking submitted successfully!');
       form.reset();
-      alert('✅ Booking submitted successfully!');
+      renderBookings();
     });
 
-    displayBookings();
+    renderBookings();
   </script>
 </body>
 </html>
