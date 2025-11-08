@@ -1,187 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MEWP Booking System</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MEWP Booking — Book</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #f5f7fa; margin: 0; padding: 0; }
-    header { background-color: #0d47a1; color: white; padding: 15px; text-align: center; font-size: 1.5rem; }
-    .top-buttons { text-align: center; margin: 15px 0; }
-    .top-buttons button {
-      background-color: #1565c0; color: white; border: none;
-      padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px; font-size: 15px;
-    }
-    .top-buttons button:hover { background-color: #0d47a1; }
-    form {
-      background-color: #fff; margin: 30px auto; padding: 20px; border-radius: 12px;
-      max-width: 600px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    label { display: block; margin-top: 12px; font-weight: bold; }
-    input, textarea { width: 100%; padding: 8px; margin-top: 6px; border: 1px solid #ccc; border-radius: 5px; }
-    .date-time-group { border: 1px solid #ccc; padding: 10px; border-radius: 8px; background-color: #f9f9f9; margin-top: 10px; }
-    button { background-color: #0d47a1; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 15px; }
-    button:hover { background-color: #1565c0; }
-    .remove-btn { background-color: #f44336; margin-top: 10px; }
-    .remove-btn:hover { background-color: #c62828; }
-    .star { color: red; }
-    #bookingView { display:none; background:white; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin:auto; max-width:900px; }
-    table { width:100%; border-collapse:collapse; margin-top:10px; }
-    th, td { border:1px solid #ccc; padding:8px; text-align:left; }
-    th { background:#1565c0; color:white; }
-    .export-btn { background:#43a047; margin-bottom:10px; }
+    :root{--blue:#0d47a1;--blue-2:#1565c0;--bg:#f5f7fb}
+    body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);margin:0}
+    .page{max-width:900px;margin:28px auto;padding:0 16px}
+    header.site{background:var(--blue);color:#fff;padding:18px;border-radius:10px;text-align:center;font-size:20px}
+    .top-actions{display:flex;justify-content:flex-end;gap:10px;margin:12px 0}
+    .btn{background:var(--blue-2);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+    .btn.secondary{background:#fff;color:var(--blue-2);border:1px solid var(--blue-2)}
+    .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.06);margin-top:12px}
+    label{display:block;margin-top:12px;font-weight:600}
+    .star{color:red;margin-left:4px}
+    input,textarea,select{width:100%;padding:9px;border:1px solid #cfcfcf;border-radius:8px;margin-top:6px;font-size:14px}
+    .date-group{border:1px dashed #ddd;padding:10px;border-radius:8px;margin-top:10px;background:#fbfdff}
+    .row{display:flex;gap:10px}
+    .col{flex:1}
+    .small{width:160px}
+    .remove-btn{background:#f44336;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;margin-top:10px}
+    .add-btn{margin-top:12px;background:#2e7d32}
+    .submit-btn{margin-top:18px;background:var(--blue)}
+    .hint{font-size:13px;color:#666;margin-top:8px}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border:1px solid #e0e0e0;padding:8px;text-align:left}
+    th{background:var(--blue);color:#fff}
+    .export-btn{background:#43a047}
+    @media(max-width:720px){.row{flex-direction:column}.small{width:100%}}
   </style>
 </head>
 <body>
-  <header>Welcome to the MEWP Booking System</header>
+  <div class="page">
+    <header class="site">MEWP Booking — Book a Manlifter (9MEWP0)</header>
 
-  <div class="top-buttons">
-    <button onclick="window.location.href='admin-login.html'">🔐 Admin Login</button>
-    <button onclick="toggleBookings()">📋 View Booking Updates</button>
-  </div>
-
-  <form id="bookingForm">
-    <label>Purpose of Booking: <span class="star">*</span></label>
-    <textarea id="purpose" required placeholder="Describe purpose..."></textarea>
-
-    <div id="dateTimeContainer">
-      <div class="date-time-group">
-        <label>Date of Booking: <span class="star">*</span></label>
-        <input type="date" required class="date">
-        <label>Start Time: <span class="star">*</span></label>
-        <input type="time" required class="startTime">
-        <label>End Time: <span class="star">*</span></label>
-        <input type="time" required class="endTime">
-        <button type="button" class="remove-btn" onclick="removeDateTime(this)">Remove Date</button>
-      </div>
+    <div class="top-actions">
+      <button class="btn" onclick="location.href='admin-login.html'">🔐 Admin Login</button>
+      <button class="btn secondary" onclick="location.href='view-bookings.html'">📋 View Booking Updates</button>
     </div>
 
-    <button type="button" onclick="addDateTime()">Add Another Date</button>
+    <div class="card">
+      <h3>Book MEWP</h3>
+      <form id="bookingForm" novalidate>
+        <label>Purpose of Booking <span class="star">*</span></label>
+        <textarea id="purpose" required placeholder="Describe the purpose (detailed)"></textarea>
 
-    <label>Area of Booking: <span class="star">*</span></label>
-    <textarea id="area" required placeholder="Mention the area..."></textarea>
+        <div id="dateContainer">
+          <div class="date-group">
+            <div class="row">
+              <div class="col">
+                <label>Date <span class="star">*</span></label>
+                <input type="date" class="date" required>
+              </div>
+              <div class="col small">
+                <label>Start time <span class="star">*</span></label>
+                <input type="time" class="start" required>
+              </div>
+              <div class="col small">
+                <label>End time <span class="star">*</span></label>
+                <input type="time" class="end" required>
+              </div>
+            </div>
+            <button type="button" class="remove-btn" onclick="removeDate(this)">Remove Date</button>
+          </div>
+        </div>
 
-    <label>Department: <span class="star">*</span></label>
-    <input type="text" id="department" required placeholder="Department name">
+        <button type="button" class="btn add-btn" onclick="addDate()">➕ Add Another Date</button>
 
-    <label>Responsible Person: <span class="star">*</span></label>
-    <input type="text" id="responsiblePerson" required placeholder="Person name">
+        <label>Area of Booking <span class="star">*</span></label>
+        <textarea id="area" required placeholder="Describe the hall/area/section"></textarea>
 
-    <label>Contact Number: <span class="star">*</span></label>
-    <input type="tel" id="contact" required pattern="[0-9]{10}" placeholder="10-digit number">
+        <label>Department <span class="star">*</span></label>
+        <input id="department" required placeholder="Department name">
 
-    <button type="submit">Submit Booking</button>
-  </form>
+        <label>Responsible Person (Name) <span class="star">*</span></label>
+        <input id="responsible" required placeholder="Full name">
 
-  <div id="bookingView">
-    <h3>All Bookings</h3>
-    <button class="export-btn" onclick="exportExcel()">⬇️ Download Excel</button>
-    <div id="bookingList"></div>
+        <label>Contact Number <span class="star">*</span></label>
+        <input id="contact" type="tel" required pattern="[0-9]{10}" placeholder="10-digit number">
+
+        <div style="text-align:right">
+          <button type="submit" class="btn submit-btn">Submit Booking</button>
+        </div>
+        <p class="hint">All fields are required. After submission admin will approve/reject.</p>
+      </form>
+    </div>
   </div>
 
   <script>
-    const form = document.getElementById("bookingForm");
-    const bookingList = document.getElementById("bookingList");
-    const bookingView = document.getElementById("bookingView");
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    // localStorage key: bookings (array)
+    const bookingForm = document.getElementById('bookingForm');
+    const dateContainer = document.getElementById('dateContainer');
 
-    function renderBookings() {
-      bookingList.innerHTML = "";
-      if (!bookings.length) { bookingList.innerHTML = "<p>No bookings found.</p>"; return; }
-
-      let table = `<table><tr>
-        <th>Purpose</th><th>Dates</th><th>Area</th>
-        <th>Department</th><th>Responsible</th><th>Contact</th>
-        <th>Status</th><th>Remarks</th><th>Type</th></tr>`;
-      const today = new Date().toISOString().split("T")[0];
-
-      bookings.forEach(b => {
-        const isPast = b.dates.some(d => d.date < today);
-        table += `<tr>
-          <td>${b.purpose}</td>
-          <td>${b.dates.map(d => `${d.date} (${d.startTime}-${d.endTime})`).join("<br>")}</td>
-          <td>${b.area}</td>
-          <td>${b.department}</td>
-          <td>${b.responsiblePerson}</td>
-          <td>${b.contact}</td>
-          <td>${b.status || "Pending"}</td>
-          <td>${b.remarks || ""}</td>
-          <td>${isPast ? "Past" : "Upcoming"}</td>
-        </tr>`;
-      });
-      table += "</table>";
-      bookingList.innerHTML = table;
-    }
-
-    function toggleBookings() {
-      bookingView.style.display = bookingView.style.display === "none" ? "block" : "none";
-      renderBookings();
-    }
-
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-      const purpose = document.getElementById("purpose").value.trim();
-      const area = document.getElementById("area").value.trim();
-      const department = document.getElementById("department").value.trim();
-      const responsiblePerson = document.getElementById("responsiblePerson").value.trim();
-      const contact = document.getElementById("contact").value.trim();
-      const dateGroups = document.querySelectorAll(".date-time-group");
-      const dates = [];
-      dateGroups.forEach(g => {
-        const date = g.querySelector(".date").value;
-        const startTime = g.querySelector(".startTime").value;
-        const endTime = g.querySelector(".endTime").value;
-        if (date && startTime && endTime) dates.push({ date, startTime, endTime });
-      });
-      if (!dates.length) return alert("Please add at least one booking date.");
-
-      const booking = { purpose, dates, area, department, responsiblePerson, contact, status:"Pending" };
-      bookings.push(booking);
-      localStorage.setItem("bookings", JSON.stringify(bookings));
-      alert("Booking submitted successfully!");
-      form.reset();
-    });
-
-    function addDateTime() {
-      const div = document.createElement("div");
-      div.classList.add("date-time-group");
+    function addDate() {
+      const div = document.createElement('div');
+      div.className = 'date-group';
       div.innerHTML = `
-        <label>Date of Booking: <span class="star">*</span></label>
-        <input type="date" required class="date">
-        <label>Start Time: <span class="star">*</span></label>
-        <input type="time" required class="startTime">
-        <label>End Time: <span class="star">*</span></label>
-        <input type="time" required class="endTime">
-        <button type="button" class="remove-btn" onclick="removeDateTime(this)">Remove Date</button>
+        <div class="row">
+          <div class="col">
+            <label>Date <span class="star">*</span></label>
+            <input type="date" class="date" required>
+          </div>
+          <div class="col small">
+            <label>Start time <span class="star">*</span></label>
+            <input type="time" class="start" required>
+          </div>
+          <div class="col small">
+            <label>End time <span class="star">*</span></label>
+            <input type="time" class="end" required>
+          </div>
+        </div>
+        <button type="button" class="remove-btn" onclick="removeDate(this)">Remove Date</button>
       `;
-      document.getElementById("dateTimeContainer").appendChild(div);
+      dateContainer.appendChild(div);
     }
 
-    function removeDateTime(button) {
-      button.closest(".date-time-group").remove();
+    function removeDate(btn) {
+      const group = btn.closest('.date-group');
+      // Always keep at least one date group
+      const total = document.querySelectorAll('.date-group').length;
+      if (total === 1) {
+        alert('At least one date is required.');
+        return;
+      }
+      group.remove();
     }
 
-    // Excel export
-    function exportExcel() {
-      if (!bookings.length) return alert("No data to export!");
-      const header = ["Purpose","Dates","Area","Department","Responsible","Contact","Status","Remarks","Type"];
-      const today = new Date().toISOString().split("T")[0];
-      const rows = bookings.map(b => {
-        const isPast = b.dates.some(d => d.date < today);
-        return [
-          b.purpose,
-          b.dates.map(d => `${d.date} (${d.startTime}-${d.endTime})`).join(", "),
-          b.area, b.department, b.responsiblePerson, b.contact,
-          b.status || "Pending", b.remarks || "", isPast ? "Past":"Upcoming"
-        ];
-      });
-      const csv = [header, ...rows].map(r => r.join(",")).join("\n");
-      const blob = new Blob([csv], { type: "text/csv" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "mewp_bookings.csv";
-      a.click();
-    }
+    function getBookings(){ return JSON.parse(localStorage.getItem('bookings')||'[]'); }
+    function setBookings(b){ localStorage.setItem('bookings', JSON.stringify(b)); }
+
+    bookingForm.addEventListener('submit', e=>{
+      e.preventDefault();
+      // validate fields
+      const purpose = document.getElementById('purpose').value.trim();
+      const area = document.getElementById('area').value.trim();
+      const department = document.getElementById('department').value.trim();
+      const responsible = document.getElementById('responsible').value.trim();
+      const contact = document.getElementById('contact').value.trim();
+
+      if(!purpose||!area||!department||!responsible||!/^\d{10}$/.test(contact)){
+        return alert('Please fill all required fields correctly (10-digit contact).');
+      }
+
+      const dateGroups = document.querySelectorAll('.date-group');
+      const dates = [];
+      for(const g of dateGroups){
+        const date = g.querySelector('.date').value;
+        const start = g.querySelector('.start').value;
+        const end = g.querySelector('.end').value;
+        if(!date||!start||!end){ return alert('Please complete all date/time entries.'); }
+        if(start >= end){ return alert('Start time must be before end time.'); }
+        dates.push({date,startTime:start,endTime:end});
+      }
+
+      // Build booking object
+      const booking = {
+        purpose, dates, area, department, responsiblePerson:responsible, contact,
+        status: 'Pending', remarks: ''
+      };
+
+      const current = getBookings();
+      current.push(booking);
+      setBookings(current);
+      alert('Booking submitted successfully. Admin will approve or reject.');
+      bookingForm.reset();
+      // reset date groups to one
+      dateContainer.innerHTML = `<div class="date-group">
+        <div class="row">
+          <div class="col"><label>Date <span class="star">*</span></label><input type="date" class="date" required></div>
+          <div class="col small"><label>Start time <span class="star">*</span></label><input type="time" class="start" required></div>
+          <div class="col small"><label>End time <span class="star">*</span></label><input type="time" class="end" required></div>
+        </div>
+        <button type="button" class="remove-btn" onclick="removeDate(this)">Remove Date</button>
+      </div>`;
+    });
   </script>
 </body>
 </html>
