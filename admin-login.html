@@ -1,73 +1,35 @@
-// ✅ Redirect to login if admin is not logged in
-if (localStorage.getItem("mewpAdminLoggedIn") !== "true") {
-  window.location.href = "admin-login.html";
-}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin Login - MEWP Booking</title>
+  <meta charset="UTF-8">
+  <title>Admin Login</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #2196f3, #64b5f6);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .login-box {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      width: 300px;
-      text-align: center;
-    }
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #1e88e5;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #1565c0;
-    }
+    body { font-family: Arial; background: #e3f2fd; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .login-box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center; width: 300px; }
+    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; }
+    button { background-color: #1565c0; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; }
+    button:hover { background-color: #0d47a1; }
   </style>
 </head>
 <body>
   <div class="login-box">
     <h2>Admin Login</h2>
-    <input type="text" id="username" placeholder="Username" /><br />
-    <input type="password" id="password" placeholder="Password" /><br />
+    <input type="text" id="username" placeholder="Admin ID" required>
+    <input type="password" id="password" placeholder="Password" required>
     <button onclick="login()">Login</button>
-    <p id="error" style="color:red; margin-top:10px;"></p>
   </div>
 
   <script>
     function login() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value.trim();
 
-      // ✅ Set your admin login credentials here:
-      const adminUser = "admin";
-      const adminPass = "mewp@123";
-
-      if (username === adminUser && password === adminPass) {
-        // store login session locally
-        localStorage.setItem("mewpAdminLoggedIn", "true");
-        window.location.href = "admin.html"; // redirect to dashboard
+      // You can change these credentials
+      if (u === "admin" && p === "admin123") {
+        localStorage.setItem("isAdmin", "true");
+        window.location.href = "admin.html";
       } else {
-        document.getElementById("error").textContent = "Invalid username or password!";
+        alert("Invalid ID or password!");
       }
     }
   </script>
