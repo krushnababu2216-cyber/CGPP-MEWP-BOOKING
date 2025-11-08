@@ -1,180 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MEWP Booking — Book</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manlifter Booking Portal (MEWP — Mobile Elevated Working Platform)</title>
   <style>
-    :root{--blue:#0d47a1;--blue-2:#1565c0;--bg:#f5f7fb}
-    body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);margin:0}
-    .page{max-width:900px;margin:28px auto;padding:0 16px}
-    header.site{background:var(--blue);color:#fff;padding:18px;border-radius:10px;text-align:center;font-size:20px}
-    .top-actions{display:flex;justify-content:flex-end;gap:10px;margin:12px 0}
-    .btn{background:var(--blue-2);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
-    .btn.secondary{background:#fff;color:var(--blue-2);border:1px solid var(--blue-2)}
-    .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.06);margin-top:12px}
-    label{display:block;margin-top:12px;font-weight:600}
-    .star{color:red;margin-left:4px}
-    input,textarea,select{width:100%;padding:9px;border:1px solid #cfcfcf;border-radius:8px;margin-top:6px;font-size:14px}
-    .date-group{border:1px dashed #ddd;padding:10px;border-radius:8px;margin-top:10px;background:#fbfdff}
-    .row{display:flex;gap:10px}
-    .col{flex:1}
-    .small{width:160px}
-    .remove-btn{background:#f44336;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;margin-top:10px}
-    .add-btn{margin-top:12px;background:#2e7d32}
-    .submit-btn{margin-top:18px;background:var(--blue)}
-    .hint{font-size:13px;color:#666;margin-top:8px}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{border:1px solid #e0e0e0;padding:8px;text-align:left}
-    th{background:var(--blue);color:#fff}
-    .export-btn{background:#43a047}
-    @media(max-width:720px){.row{flex-direction:column}.small{width:100%}}
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #f3f6fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #003366;
+      color: #fff;
+      text-align: center;
+      padding: 20px 10px;
+      border-bottom: 4px solid #0066cc;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8em;
+    }
+
+    header p {
+      margin-top: 6px;
+      font-size: 0.9em;
+      color: #cce0ff;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: #fff;
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    label span {
+      color: red;
+      margin-left: 3px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .add-date-btn {
+      background-color: #0066cc;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .add-date-btn:hover {
+      background-color: #004c99;
+    }
+
+    button[type="submit"] {
+      background-color: #0066cc;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1em;
+      margin-top: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #004c99;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 0.85em;
+      background-color: #003366;
+      color: white;
+      margin-top: 30px;
+    }
+
+    .booking-summary {
+      margin-top: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #0066cc;
+      color: #fff;
+    }
   </style>
 </head>
+
 <body>
-  <div class="page">
-   <h1>Manlifter Booking Portal (MEWP — Mobile Elevated Working Platform)</h1
+  <header>
+    <h1>Manlifter Booking Portal (MEWP — Mobile Elevated Working Platform)</h1>
+    <p>Mobile Elevated Working Platform — Booking & Approval System</p>
+  </header>
 
-    <div class="top-actions">
-      <button class="btn" onclick="location.href='admin-login.html'">🔐 Admin Login</button>
-      <button class="btn secondary" onclick="location.href='view-bookings.html'">📋 View Booking Updates</button>
-    </div>
+  <main>
+    <h2>Book the MEWP</h2>
+    <form id="bookingForm">
+      <label>Purpose of Booking<span>*</span></label>
+      <textarea id="purpose" required placeholder="Describe purpose of booking"></textarea>
 
-    <div class="card">
-      <h3>Book MEWP</h3>
-      <form id="bookingForm" novalidate>
-        <label>Purpose of Booking <span class="star">*</span></label>
-        <textarea id="purpose" required placeholder="Describe the purpose (detailed)"></textarea>
-
-        <div id="dateContainer">
-          <div class="date-group">
-            <div class="row">
-              <div class="col">
-                <label>Date <span class="star">*</span></label>
-                <input type="date" class="date" required>
-              </div>
-              <div class="col small">
-                <label>Start time <span class="star">*</span></label>
-                <input type="time" class="start" required>
-              </div>
-              <div class="col small">
-                <label>End time <span class="star">*</span></label>
-                <input type="time" class="end" required>
-              </div>
-            </div>
-            <button type="button" class="remove-btn" onclick="removeDate(this)">Remove Date</button>
-          </div>
+      <label>Date(s) of Booking<span>*</span></label>
+      <div id="dateTimeContainer">
+        <div class="date-time-row">
+          <input type="date" required />
+          <input type="time" required />
+          <input type="time" required />
         </div>
+      </div>
+      <button type="button" class="add-date-btn" onclick="addDateTime()">+ Add another date</button>
 
-        <button type="button" class="btn add-btn" onclick="addDate()">➕ Add Another Date</button>
+      <label>Area of Booking<span>*</span></label>
+      <textarea id="area" required placeholder="Enter area details"></textarea>
 
-        <label>Area of Booking <span class="star">*</span></label>
-        <textarea id="area" required placeholder="Describe the hall/area/section"></textarea>
+      <label>Department<span>*</span></label>
+      <input type="text" id="department" required placeholder="Enter department name" />
 
-        <label>Department <span class="star">*</span></label>
-        <input id="department" required placeholder="Department name">
+      <label>Responsible Person<span>*</span></label>
+      <input type="text" id="person" required placeholder="Enter responsible person's name" />
 
-        <label>Responsible Person (Name) <span class="star">*</span></label>
-        <input id="responsible" required placeholder="Full name">
+      <label>Contact Number<span>*</span></label>
+      <input type="tel" id="contact" required placeholder="Enter contact number" />
 
-        <label>Contact Number <span class="star">*</span></label>
-        <input id="contact" type="tel" required pattern="[0-9]{10}" placeholder="10-digit number">
+      <button type="submit">Submit Booking</button>
+    </form>
 
-        <div style="text-align:right">
-          <button type="submit" class="btn submit-btn">Submit Booking</button>
-        </div>
-        <p class="hint">All fields are required. After submission admin will approve/reject.</p>
-      </form>
+    <div class="booking-summary">
+      <h3>Current Bookings</h3>
+      <table id="bookingTable">
+        <thead>
+          <tr>
+            <th>Purpose</th>
+            <th>Date(s)</th>
+            <th>Area</th>
+            <th>Department</th>
+            <th>Person</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-  </div>
+  </main>
+
+  <footer>
+    © 2025 CGPP | MEWP Booking System
+  </footer>
 
   <script>
-    // localStorage key: bookings (array)
-    const bookingForm = document.getElementById('bookingForm');
-    const dateContainer = document.getElementById('dateContainer');
-
-    function addDate() {
+    function addDateTime() {
+      const container = document.getElementById('dateTimeContainer');
       const div = document.createElement('div');
-      div.className = 'date-group';
+      div.className = 'date-time-row';
       div.innerHTML = `
-        <div class="row">
-          <div class="col">
-            <label>Date <span class="star">*</span></label>
-            <input type="date" class="date" required>
-          </div>
-          <div class="col small">
-            <label>Start time <span class="star">*</span></label>
-            <input type="time" class="start" required>
-          </div>
-          <div class="col small">
-            <label>End time <span class="star">*</span></label>
-            <input type="time" class="end" required>
-          </div>
-        </div>
-        <button type="button" class="remove-btn" onclick="removeDate(this)">Remove Date</button>
+        <input type="date" required />
+        <input type="time" required />
+        <input type="time" required />
       `;
-      dateContainer.appendChild(div);
+      container.appendChild(div);
     }
-
-    function removeDate(btn) {
-      const group = btn.closest('.date-group');
-      // Always keep at least one date group
-      const total = document.querySelectorAll('.date-group').length;
-      if (total === 1) {
-        alert('At least one date is required.');
-        return;
-      }
-      group.remove();
-    }
-
-    function getBookings(){ return JSON.parse(localStorage.getItem('bookings')||'[]'); }
-    function setBookings(b){ localStorage.setItem('bookings', JSON.stringify(b)); }
-
-    bookingForm.addEventListener('submit', e=>{
-      e.preventDefault();
-      // validate fields
-      const purpose = document.getElementById('purpose').value.trim();
-      const area = document.getElementById('area').value.trim();
-      const department = document.getElementById('department').value.trim();
-      const responsible = document.getElementById('responsible').value.trim();
-      const contact = document.getElementById('contact').value.trim();
-
-      if(!purpose||!area||!department||!responsible||!/^\d{10}$/.test(contact)){
-        return alert('Please fill all required fields correctly (10-digit contact).');
-      }
-
-      const dateGroups = document.querySelectorAll('.date-group');
-      const dates = [];
-      for(const g of dateGroups){
-        const date = g.querySelector('.date').value;
-        const start = g.querySelector('.start').value;
-        const end = g.querySelector('.end').value;
-        if(!date||!start||!end){ return alert('Please complete all date/time entries.'); }
-        if(start >= end){ return alert('Start time must be before end time.'); }
-        dates.push({date,startTime:start,endTime:end});
-      }
-
-      // Build booking object
-      const booking = {
-        purpose, dates, area, department, responsiblePerson:responsible, contact,
-        status: 'Pending', remarks: ''
-      };
-
-      const current = getBookings();
-      current.push(booking);
-      setBookings(current);
-      alert('Booking submitted successfully. Admin will approve or reject.');
-      bookingForm.reset();
-      // reset date groups to one
-      dateContainer.innerHTML = `<div class="date-group">
-        <div class="row">
-          <div class="col"><label>Date <span class="star">*</span></label><input type="date" class="date" required></div>
-          <div class="col small"><label>Start time <span class="star">*</span></label><input type="time" class="start" required></div>
-          <div class="col small"><label>End time <span class="star">*</span></label><input type="time" class="end" required></div>
-        </div>
-        <button type="button" class="remove-btn" onclick="removeDate(this)">Remove Date</button>
-      </div>`;
-    });
   </script>
 </body>
 </html>
