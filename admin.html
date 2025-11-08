@@ -1,127 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MEWP Booking — Admin</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Manlifter Booking Portal (MEWP — Mobile Elevated Working Platform)</title>
   <style>
-    body{font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;margin:0}
-    .page{max-width:1200px;margin:28px auto;padding:0 16px}
-    header{background:#0d47a1;color:#fff;padding:16px;border-radius:10px;text-align:center;position:relative}
-    .logout{position:absolute;right:14px;top:10px;background:#f44336;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
-    .container{background:#fff;padding:18px;border-radius:12px;margin-top:16px;box-shadow:0 6px 20px rgba(0,0,0,0.06)}
-    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .btn{background:#1565c0;color:#fff;padding:9px 12px;border-radius:8px;border:none;cursor:pointer}
-    .danger{background:#f44336}
-    table{width:100%;border-collapse:collapse;margin-top:12px}
-    th,td{border:1px solid #e0e0e0;padding:8px;text-align:left}
-    th{background:#1565c0;color:#fff}
-    .small{white-space:nowrap}
-    @media(max-width:900px){.controls{flex-direction:column;align-items:flex-start}}
-  </style>
-</head>
-<body>
-  <div class="page">
-    <header>MEWP Booking — Admin Panel
-      <button class="logout" onclick="logout()">Logout</button>
-    </header>
-
-    <div class="container">
-      <div class="controls">
-        <button class="btn" onclick="render()">Refresh</button>
-        <button class="btn" onclick="downloadAdmin()">⬇️ Export CSV</button>
-      </div>
-
-      <div id="tableArea"></div>
-    </div>
-  </div>
-
-  <script>
-    // Admin protection: check localStorage adminUser (set by admin-login.html)
-    if(!localStorage.getItem('adminUser')){
-      alert('Admin not logged in. Redirecting to login.');
-      window.location.href = 'admin-login.html';
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #f3f6fa;
+      margin: 0;
+      padding: 0;
     }
 
-    function getBookings(){ return JSON.parse(localStorage.getItem('bookings')||'[]'); }
-    function setBookings(b){ localStorage.setItem('bookings', JSON.stringify(b)); }
-
-    function render(){
-      const bookings = getBookings();
-      if(!bookings.length){ document.getElementById('tableArea').innerHTML = '<p>No bookings found.</p>'; return; }
-
-      const today = new Date().toISOString().split('T')[0];
-      let html = `<table><tr>
-        <th>Purpose</th><th>Dates & Times</th><th>Area</th><th>Department</th>
-        <th>Responsible</th><th>Contact</th><th>Status</th><th>Remarks</th><th>Type</th><th class="small">Actions</th>
-      </tr>`;
-
-      bookings.forEach((b,i)=>{
-        const isPast = b.dates.some(d=>d.date < today);
-        html += `<tr>
-          <td>${escape(b.purpose)}</td>
-          <td>${b.dates.map(d=>escape(d.date+' ('+d.startTime+' - '+d.endTime+')')).join('<br>')}</td>
-          <td>${escape(b.area)}</td>
-          <td>${escape(b.department)}</td>
-          <td>${escape(b.responsiblePerson)}</td>
-          <td>${escape(b.contact)}</td>
-          <td>${escape(b.status||'Pending')}</td>
-          <td>${escape(b.remarks||'')}</td>
-          <td>${isPast?'Past':'Upcoming'}</td>
-          <td>
-            <button class="btn" onclick="approve(${i})">Approve</button>
-            <button class="btn danger" onclick="reject(${i})">Reject</button>
-            <button class="btn" style="background:#757575" onclick="remove(${i})">Delete</button>
-          </td>
-        </tr>`;
-      });
-
-      html += `</table>`;
-      document.getElementById('tableArea').innerHTML = html;
+    header {
+      background-color: #003366;
+      color: #fff;
+      text-align: center;
+      padding: 20px 10px;
+      border-bottom: 4px solid #0066cc;
     }
 
-    function escape(s){ return (s||'').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
-
-    function saveAndRender(b){
-      setBookings(b);
-      render();
+    header h1 {
+      margin: 0;
+      font-size: 1.8em;
     }
 
-    function approve(i){
-      const b = getBookings();
-      const r = prompt('Enter remarks (optional):','');
-      b[i].status='Approved'; b[i].remarks = r||'';
-      saveAndRender(b);
-    }
-    function reject(i){
-      const b = getBookings();
-      const r = prompt('Enter remarks (required):','');
-      b[i].status='Rejected'; b[i].remarks = r||'';
-      saveAndRender(b);
-    }
-    function remove(i){
-      if(!confirm('Delete this booking permanently?')) return;
-      const b = getBookings(); b.splice(i,1); saveAndRender(b);
+    header p {
+      margin-top: 6px;
+      font-size: 0.9em;
+      color: #cce0ff;
     }
 
-    function downloadAdmin(){
-      const bookings = getBookings();
-      if(!bookings.length) return alert('No data to export');
-      const today = new Date().toISOString().split('T')[0];
-      const header = ['Purpose','Dates','Area','Department','Responsible','Contact','Status','Remarks','Type'];
-      const rows = bookings.map(b=>{
-        const type = b.dates.some(d=>d.date < today) ? 'Past':'Upcoming';
-        const dates = b.dates.map(d=>`${d.date} (${d.startTime}-${d.endTime})`).join(' | ');
-        return [b.purpose, dates, b.area, b.department, b.responsiblePerson, b.contact, b.status||'Pending', b.remarks||'', type];
-      });
-      const csv = [header,...rows].map(r=>r.map(c=>`"${String(c).replaceAll('"','""')}"`).join(',')).join('\n');
-      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='mewp_bookings_admin.csv'; a.click();
+    main {
+      max-width: 1000px;
+      margin: 30px auto;
+      background-color: #fff;
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
 
-    function logout(){ localStorage.removeItem('adminUser'); window.location.href='admin-login.html'; }
+    h2 {
+      color: #003366;
+      border-bottom: 2px solid #0066cc;
+      padding-bottom: 5px;
+    }
 
-    // initial render
-    render();
-  </script>
-</body>
-</html>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+      font-size: 0.95em;
+    }
+
+    th {
+      background-color: #0066cc;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    .status-pending {
+      color: #555;
+      font-weight: bold;
+    }
+
+    .status-approved {
+      color: green;
+      font-weight: bold;
+    }
+
+    .status-rejected {
+      color: red;
+      font-weight: bold;
+    }
+
+    button {
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+    }
+
+    .approve-btn { background-color: #28a745; }
+    .reject-btn { background-color: #dc3545; }
+    .delete-btn { background-color: #6c757d; }
+
+    .approve-btn:hover { background-color: #218838; }
+    .reject-btn:hover { background-color: #c82333; }
+    .delete-btn:hover { background-color: #5a6268; }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 0.85em;
+      background-color: #003366;
+      color: white;
+      margin-top: 30px;
+    }
+
+    .top-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .download-btn {
+      background-color: #0066cc;
+      padding: 8px 16px;
+      border-radius: 6px;
+      color: white;
+      text-decoration: none;
+      font-wei
