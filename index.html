@@ -5,269 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manlifter Booking Portal (MEWP — Mobile Elevated Working Platform)</title>
   <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background-color: #f3f6fa;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #003366;
-      color: #fff;
-      text-align: center;
-      padding: 20px 10px;
-      border-bottom: 4px solid #0066cc;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.8em;
-    }
-
-    header p {
-      margin-top: 6px;
-      font-size: 0.9em;
-      color: #cce0ff;
-    }
-
-    main {
-      max-width: 600px;
-      margin: 30px auto;
-      background-color: #fff;
-      padding: 25px 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: 600;
-      color: #333;
-    }
-
-    label span {
-      color: red;
-      margin-left: 3px;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-      box-sizing: border-box;
-    }
-
-    textarea {
-      resize: vertical;
-    }
-
-    .add-date-btn {
-      background-color: #0066cc;
-      color: #fff;
-      border: none;
-      padding: 8px 12px;
-      margin-top: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .add-date-btn:hover {
-      background-color: #004c99;
-    }
-
-    button[type="submit"] {
-      background-color: #0066cc;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      font-size: 1em;
-      margin-top: 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    button[type="submit"]:hover {
-      background-color: #004c99;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      font-size: 0.85em;
-      background-color: #003366;
-      color: white;
-      margin-top: 30px;
-    }
-
-    .booking-summary {
-      margin-top: 40px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-    }
-
-    th {
-      background-color: #0066cc;
-      color: #fff;
-    }
+    body { font-family: Arial, sans-serif; background: #f5f7fa; margin: 0; padding: 0; }
+    header { background: #003366; color: #fff; padding: 15px; }
+    header nav a { color: #fff; margin: 0 10px; text-decoration: none; }
+    .container { max-width: 700px; margin: 30px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { margin-bottom: 20px; font-size: 1.5em; color: #003366; }
+    label { display: block; margin: 12px 0 6px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    .star { color: red; margin-left: 3px; }
+    .btn { background: #0066cc; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; }
+    .btn.secondary { background: #555; }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .col { flex: 1; }
+    @media(max-width:600px) { .form-row { flex-direction: column; } }
   </style>
 </head>
-
 <body>
-  <header>
-    <h1>Manlifter Booking Portal (MEWP — Mobile Elevated Working Platform)</h1>
-    <div style="text-align: center; margin: 10px;">
-  <a href="admin-login.html" style="background-color:#004aad; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; margin-right:8px;">
-    🔐 Admin Login
-  </a>
-  <a href="view-bookings.html" style="background-color:#f0ad4e; color:white; padding:8px 15px; border-radius:6px; text-decoration:none;">
-    📋 View Booking Status
-  </a>
-</div>
 
-    <p>Mobile Elevated Working Platform — Booking & Approval System</p>
+  <header>
+    <nav>
+      <a href="book.html">Book</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="admin-login.html">Admin Login</a>
+    </nav>
   </header>
 
-  <main>
-    <h2>Book the MEWP</h2>
+  <div class="container">
+    <h1>Book MEWP</h1>
+
     <form id="bookingForm">
-  <label>Purpose of Booking <span style="color:red">*</span></label>
-  <textarea id="purpose" required></textarea>
+      <label>Select Vehicle <span class="star">*</span></label>
+      <select id="vehicle" required>
+        <option value="">Select a vehicle</option>
+        <option value="MEWP-OD 24 H 4213">MEWP (OD 24 H 4213)</option>
+        <!-- add more options if needed -->
+      </select>
 
-  <label>Date(s) of Booking <span style="color:red">*</span></label>
-  <input type="text" id="dates" placeholder="e.g. 09/11/2025, 10/11/2025" required />
+      <label>Purpose of Booking <span class="star">*</span></label>
+      <textarea id="purpose" required placeholder="Enter purpose"></textarea>
 
-  <label>Area of Booking <span style="color:red">*</span></label>
-  <input type="text" id="area" required />
+      <div class="form-row">
+        <div class="col">
+          <label>Start Date <span class="star">*</span></label>
+          <input type="date" id="startDate" required>
+        </div>
+        <div class="col">
+          <label>Start Time <span class="star">*</span></label>
+          <input type="time" id="startTime" required>
+        </div>
+      </div>
 
-  <label>Department <span style="color:red">*</span></label>
-  <input type="text" id="department" required />
+      <div class="form-row">
+        <div class="col">
+          <label>End Date <span class="star">*</span></label>
+          <input type="date" id="endDate" required>
+        </div>
+        <div class="col">
+          <label>End Time <span class="star">*</span></label>
+          <input type="time" id="endTime" required>
+        </div>
+      </div>
 
-  <label>Responsible Person <span style="color:red">*</span></label>
-  <input type="text" id="person" required />
+      <label>Area of Booking <span class="star">*</span></label>
+      <textarea id="area" required placeholder="Enter area"></textarea>
 
-  <label>Contact Number <span style="color:red">*</span></label>
-  <input type="text" id="contact" required />
+      <label>Department <span class="star">*</span></label>
+      <input type="text" id="department" required placeholder="Enter department">
 
-  <button type="submit">Submit Booking</button>
-</form>
+      <label>Responsible Person Name <span class="star">*</span></label>
+      <input type="text" id="responsibleName" required placeholder="Enter name">
 
+      <label>Responsible Person Contact Number <span class="star">*</span></label>
+      <input type="tel" id="contactNumber" required placeholder="10-digit number">
 
-    <div class="booking-summary">
-     <h3 style="text-align:center; color:#004aad;">📅 View Booking Status</h3>
-<p style="text-align:center; color:#555;">All users can view current and past MEWP bookings below.</p>
+      <button type="submit" class="btn">Submit Booking</button>
+      <button type="button" class="btn secondary" onclick="location.href='schedule.html'">View Schedule</button>
+    </form>
 
-      <table id="bookingTable">
-        <thead>
-          <tr>
-            <th>Purpose</th>
-            <th>Date(s)</th>
-            <th>Area</th>
-            <th>Department</th>
-            <th>Person</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </main>
+  </div>
 
-  <footer>
-    © 2025 CGPP | MEWP Booking System
-  </footer>
-
-<script>
-  // Function to load bookings from localStorage
-  function loadBookings() {
-    return JSON.parse(localStorage.getItem("bookings")) || [];
-  }
-
-  // Function to save bookings to localStorage
-  function saveBookings(bookings) {
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-  }
-
-  // Function to render the booking summary table
-  function renderBookings() {
-    const bookings = loadBookings();
-    const table = document.getElementById("bookingTableBody");
-    if (!table) return;
-    table.innerHTML = "";
-    bookings.forEach((b, i) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${b.purpose}</td>
-        <td>${b.dates}</td>
-        <td>${b.area}</td>
-        <td>${b.department}</td>
-        <td>${b.person}</td>
-        <td>${b.contact}</td>
-        <td>${b.status}</td>
-      `;
-      table.appendChild(tr);
-    });
-  }
-
-  // Booking form submission handler
-  const form = document.getElementById("bookingForm");
-  if (form) {
-    form.addEventListener("submit", function (e) {
+  <script>
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      // simple validation
+      const vehicle = document.getElementById('vehicle').value;
+      const purpose = document.getElementById('purpose').value.trim();
+      const sd = document.getElementById('startDate').value;
+      const st = document.getElementById('startTime').value;
+      const ed = document.getElementById('endDate').value;
+      const et = document.getElementById('endTime').value;
+      const area = document.getElementById('area').value.trim();
+      const dept = document.getElementById('department').value.trim();
+      const name = document.getElementById('responsibleName').value.trim();
+      const contact = document.getElementById('contactNumber').value.trim();
 
-      const purpose = document.getElementById("purpose").value.trim();
-      const dates = document.getElementById("dates").value.trim();
-      const area = document.getElementById("area").value.trim();
-      const department = document.getElementById("department").value.trim();
-      const person = document.getElementById("person").value.trim();
-      const contact = document.getElementById("contact").value.trim();
-
-      if (!purpose || !dates || !area || !department || !person || !contact) {
-        alert("⚠️ Please fill all required fields before submitting.");
+      if (!vehicle || !purpose || !sd || !st || !ed || !et || !area || !dept || !name || !contact) {
+        alert('⚠️ Please fill all required fields.');
         return;
       }
 
-      const bookings = loadBookings();
-      bookings.push({
-        purpose,
-        dates,
-        area,
-        department,
-        person,
-        contact,
-        status: "Pending"
-      });
-      saveBookings(bookings);
+      // prepare booking object
+      const booking = { vehicle, purpose, startDate: sd, startTime: st, endDate: ed, endTime: et, area, department: dept, responsibleName: name, contactNumber: contact, status:'Pending' };
 
-      // Show success message
-      alert("✅ Booking submitted successfully!");
+      // save to localStorage
+      const bookings = JSON.parse(localStorage.getItem('bookings')||'[]');
+      bookings.push(booking);
+      localStorage.setItem('bookings', JSON.stringify(bookings));
 
-      // Reset the form
-      form.reset();
-
-      // Re-render the table
-      renderBookings();
+      alert('✅ Booking submitted successfully!');
+      this.reset();
     });
-  }
-
-  // Load existing bookings when the page loads
-  renderBookings();
-</script>
+  </script>
 
 </body>
 </html>
