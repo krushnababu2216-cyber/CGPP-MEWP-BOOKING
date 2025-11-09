@@ -146,33 +146,27 @@
   <main>
     <h2>Book the MEWP</h2>
     <form id="bookingForm">
-      <label>Purpose of Booking<span>*</span></label>
-      <textarea id="purpose" required placeholder="Describe purpose of booking"></textarea>
+  <label>Purpose of Booking <span style="color:red">*</span></label>
+  <textarea id="purpose" required></textarea>
 
-      <label>Date(s) of Booking<span>*</span></label>
-      <div id="dateTimeContainer">
-        <div class="date-time-row">
-          <input type="date" required />
-          <input type="time" required />
-          <input type="time" required />
-        </div>
-      </div>
-      <button type="button" class="add-date-btn" onclick="addDateTime()">+ Add another date</button>
+  <label>Date(s) of Booking <span style="color:red">*</span></label>
+  <input type="text" id="dates" placeholder="e.g. 09/11/2025, 10/11/2025" required />
 
-      <label>Area of Booking<span>*</span></label>
-      <textarea id="area" required placeholder="Enter area details"></textarea>
+  <label>Area of Booking <span style="color:red">*</span></label>
+  <input type="text" id="area" required />
 
-      <label>Department<span>*</span></label>
-      <input type="text" id="department" required placeholder="Enter department name" />
+  <label>Department <span style="color:red">*</span></label>
+  <input type="text" id="department" required />
 
-      <label>Responsible Person<span>*</span></label>
-      <input type="text" id="person" required placeholder="Enter responsible person's name" />
+  <label>Responsible Person <span style="color:red">*</span></label>
+  <input type="text" id="person" required />
 
-      <label>Contact Number<span>*</span></label>
-      <input type="tel" id="contact" required placeholder="Enter contact number" />
+  <label>Contact Number <span style="color:red">*</span></label>
+  <input type="text" id="contact" required />
 
-      <button type="submit">Submit Booking</button>
-    </form>
+  <button type="submit">Submit Booking</button>
+</form>
+
 
     <div class="booking-summary">
      <h3 style="text-align:center; color:#004aad;">📅 View Booking Status</h3>
@@ -230,45 +224,48 @@
     });
   }
 
-  // Function for submitting a booking
-  document.getElementById("bookingForm").addEventListener("submit", function (e) {
-    e.preventDefault();
+  // Booking form submission handler
+  const form = document.getElementById("bookingForm");
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
 
-    const purpose = document.getElementById("purpose").value.trim();
-    const dates = document.getElementById("dates").value.trim();
-    const area = document.getElementById("area").value.trim();
-    const department = document.getElementById("department").value.trim();
-    const person = document.getElementById("person").value.trim();
-    const contact = document.getElementById("contact").value.trim();
+      const purpose = document.getElementById("purpose").value.trim();
+      const dates = document.getElementById("dates").value.trim();
+      const area = document.getElementById("area").value.trim();
+      const department = document.getElementById("department").value.trim();
+      const person = document.getElementById("person").value.trim();
+      const contact = document.getElementById("contact").value.trim();
 
-    if (!purpose || !dates || !area || !department || !person || !contact) {
-      alert("⚠️ Please fill all required fields before submitting.");
-      return;
-    }
+      if (!purpose || !dates || !area || !department || !person || !contact) {
+        alert("⚠️ Please fill all required fields before submitting.");
+        return;
+      }
 
-    const bookings = loadBookings();
-    bookings.push({
-      purpose,
-      dates,
-      area,
-      department,
-      person,
-      contact,
-      status: "Pending"
+      const bookings = loadBookings();
+      bookings.push({
+        purpose,
+        dates,
+        area,
+        department,
+        person,
+        contact,
+        status: "Pending"
+      });
+      saveBookings(bookings);
+
+      // Show success message
+      alert("✅ Booking submitted successfully!");
+
+      // Reset the form
+      form.reset();
+
+      // Re-render the table
+      renderBookings();
     });
-    saveBookings(bookings);
+  }
 
-    // Show success message
-    alert("✅ Booking submitted successfully!");
-
-    // Reset the form
-    document.getElementById("bookingForm").reset();
-
-    // Re-render the table
-    renderBookings();
-  });
-
-  // Load existing bookings on page load
+  // Load existing bookings when the page loads
   renderBookings();
 </script>
 
