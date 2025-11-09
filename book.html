@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book MEWP - Manlifter Booking Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #004aad;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+    }
+    input:required, textarea:required {
+      border-left: 3px solid red;
+    }
+    button {
+      background-color: #004aad;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #003580;
+    }
+    .success {
+      color: green;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .note {
+      font-size: 13px;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Manlifter Booking Portal (MEWP — Mobile Elevated Working Platform)</header>
+
+  <div class="container">
+    <form id="bookingForm">
+      <label>Purpose of Booking <span style="color:red">*</span></label>
+      <textarea id="purpose" required placeholder="Enter purpose of booking..."></textarea>
+
+      <label>Start Date <span style="color:red">*</span></label>
+      <input type="date" id="startDate" required>
+
+      <label>Start Time <span style="color:red">*</span></label>
+      <input type="time" id="startTime" required>
+
+      <label>End Date <span style="color:red">*</span></label>
+      <input type="date" id="endDate" required>
+
+      <label>End Time <span style="color:red">*</span></label>
+      <input type="time" id="endTime" required>
+
+      <label>Area of Booking <span style="color:red">*</span></label>
+      <textarea id="area" required placeholder="Enter work area..."></textarea>
+
+      <label>Department <span style="color:red">*</span></label>
+      <input type="text" id="department" required placeholder="Enter department name">
+
+      <label>Responsible Person <span style="color:red">*</span></label>
+      <input type="text" id="person" required placeholder="Enter responsible person name">
+
+      <label>Contact Number <span style="color:red">*</span></label>
+      <input type="tel" id="contact" required placeholder="Enter contact number">
+
+      <button type="submit">Submit Booking</button>
+      <p id="message" class="success"></p>
+      <p class="note">Note: All fields are mandatory.</p>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const purpose = document.getElementById('purpose').value.trim();
+      const startDate = document.getElementById('startDate').value;
+      const startTime = document.getElementById('startTime').value;
+      const endDate = document.getElementById('endDate').value;
+      const endTime = document.getElementById('endTime').value;
+      const area = document.getElementById('area').value.trim();
+      const department = document.getElementById('department').value.trim();
+      const person = document.getElementById('person').value.trim();
+      const contact = document.getElementById('contact').value.trim();
+
+      if (!purpose || !startDate || !startTime || !endDate || !endTime || !area || !department || !person || !contact) {
+        alert("⚠️ Please fill all required fields!");
+        return;
+      }
+
+      const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+      bookings.push({
