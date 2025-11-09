@@ -10,11 +10,13 @@
     header nav a { color: #fff; margin: 0 10px; text-decoration: none; }
     button.logout { background: red; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
     .container { max-width: 1000px; margin: 30px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    table { width: 100%; border-collapse: collapse; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     th { background-color: #003366; color: white; }
     .approve { background: green; color: white; border: none; padding: 6px 10px; border-radius: 4px; }
     .reject { background: red; color: white; border: none; padding: 6px 10px; border-radius: 4px; }
+    .top-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .download { background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -29,7 +31,11 @@
   </header>
 
   <div class="container">
-    <h1>Admin Dashboard</h1>
+    <div class="top-controls">
+      <h1>Admin Dashboard</h1>
+      <button class="download" onclick="downloadExcel()">⬇️ Download Excel</button>
+    </div>
+
     <table>
       <thead>
         <tr>
@@ -50,6 +56,7 @@
   </div>
 
   <script>
+    // Redirect if not logged in
     if (localStorage.getItem('adminLoggedIn') !== 'true') {
       alert('⚠️ Please login first.');
       window.location.href = 'admin-login.html';
@@ -58,6 +65,7 @@
     const table = document.getElementById('adminTable');
     let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
 
+    // Render function
     function render() {
       table.innerHTML = "";
       if (bookings.length === 0) {
@@ -85,6 +93,7 @@
       }
     }
 
+    // Approve / Reject
     function updateStatus(i, status) {
       bookings[i].status = status;
       localStorage.setItem('bookings', JSON.stringify(bookings));
@@ -92,9 +101,32 @@
       alert(`✅ Booking ${status}`);
     }
 
+    // Logout
     function logout() {
       localStorage.removeItem('adminLoggedIn');
       window.location.href = 'admin-login.html';
+    }
+
+    // Download Excel (actually CSV for simplicity)
+    function downloadExcel() {
+      if (bookings.length === 0) {
+        alert("⚠️ No bookings available to download.");
+        return;
+      }
+
+      const headers = ["Vehicle", "Purpose", "Start Date", "Start Time", "End Date", "End Time", "Area", "Department", "Person", "Contact", "Status"];
+      const rows = bookings.map(b => [
+        b.vehicle, b.purpose, b.startDate, b.startTime, b.endDate, b.endTime, b.area, b.department, b.responsibleName, b.contactNumber, b.status
+      ]);
+
+      let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(r => r.join(",")).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "MEWP_Bookings.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     render();
