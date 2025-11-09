@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEWP Booking Schedule</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f7fa; margin: 0; }
+    header { background: #003366; color: #fff; padding: 15px; }
+    header nav a { color: #fff; margin: 0 10px; text-decoration: none; }
+    .container { max-width: 900px; margin: 30px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #003366; color: white; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="book.html">Book</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="admin-login.html">Admin Login</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1 style="color:#003366;">📅 MEWP Booking Schedule</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Vehicle</th>
+          <th>Purpose</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Area</th>
+          <th>Department</th>
+          <th>Person</th>
+          <th>Contact</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="scheduleBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const tbody = document.getElementById('scheduleBody');
+    const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+
+    if (bookings.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9">No bookings found.</td></tr>`;
+    } else {
+      bookings.forEach(b => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${b.vehicle}</td>
+          <td>${b.purpose}</td>
+          <td>${b.startDate} ${b.startTime}</td>
+          <td>${b.endDate} ${b.endTime}</td>
+          <td>${b.area}</td>
+          <td>${b.department}</td>
+          <td>${b.responsibleName}</td>
+          <td>${b.contactNumber}</td>
+          <td>${b.status}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
+
+</body>
+</html>
